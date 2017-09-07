@@ -1,85 +1,81 @@
 function SwipeMenu() {
 
     var menuWidth;
+    var sideMenu;
+    var sideMenuOverlay;
+    var body = document.getElementsByTagName("BODY")[0];
     window.onload = function () {
         menuWidth = document.getElementsByClassName('side-menu')[0].offsetWidth;
+        sideMenu = document.getElementById('sideMenu');
+        sideMenuOverlay = document.getElementById('sideMenuOverlay');
+        body = document.getElementsByTagName("BODY")[0];
     };
 
-// var menuWidth = $('.side-menu').outerWidth();
     var touchableSize = window.innerWidth * 0.1;
     var areaAllowOpen = window.innerWidth - touchableSize;
     var areaAllowClose = touchableSize;
     var open = false;
 
-// $('.side-menu').css({ right: -Math.abs(menuWidth) });
-
-    var sideMenu = document.getElementsByClassName('side-menu');
-    var sideMenuOverlay = document.getElementsByClassName('side-menu-overlay');
-
-
-    function animSideMenu(startPosition, endPosition) {
-        var elem = document.getElementById('sideMenu');
-        var currentPos = startPosition;
-        var id = setInterval(frame, 1);
-        function frame() {
-            var breakCondition = startPosition < endPosition ? currentPos >= endPosition : currentPos <= endPosition;
-            if (breakCondition) {
-                clearInterval(id);
-            } else {
-                if (startPosition < endPosition) {
-                    currentPos+=10;
-                    elem.style.right = currentPos  + 'px';
-                } else {
-                    currentPos-=10;
-                    elem.style.right = currentPos  + 'px';
-                }
-            }
-        }
-    }
-
-    function animSideMenu2(startPosition, endPosition) {
-        for (i = startPosition; i <= endPosition; i++) {
-            var rightValue = parseInt(document.getElementById('sideMenu').style.right, 10);
-            document.getElementById('sideMenu').style.right = `${rightValue + 1}px`;
-            console.log(i+" "+endPosition);
-            console.log(rightValue);
-        }
-    }
-
     function openSideMenu() {
         console.log("openSideMenu called");
         open = true;
-        $('body').addClass('no-scroll');
-        $('.side-menu-overlay').addClass('open');
-        // TODO add right after anim
-        // $('.side-menu').addClass('open');
-        animSideMenu(parseInt(document.getElementById('sideMenu').style.right, 10), 0);
-        // document.getElementById('sideMenu').style.right = '0%';
-        $('.side-menu-overlay').animate({opacity: 0.70});
-        // $('.side-menu').animate({ right: '0' });
+
+        body.style.overflow = 'hidden';
+
+        sideMenuOverlay.style.display = 'block';
+
+        sideMenu.style.webkitTransition = 'all 0.5s ease-in-out';
+        sideMenu.style.MozTransition = 'all 0.5s ease-in-out';
+        sideMenu.style.msTransition = 'all 0.5s ease-in-out';
+        sideMenu.style.OTransition = 'all 0.5s ease-in-out';
+        sideMenu.style.transition = 'all 0.5s ease-in-out';
+        sideMenu.style.right = '0%';
+        sideMenuOverlay.style.webkitTransition = 'all 0.5s ease-in-out';
+        sideMenuOverlay.style.MozTransition = 'all 0.5s ease-in-out';
+        sideMenuOverlay.style.msTransition = 'all 0.5s ease-in-out';
+        sideMenuOverlay.style.OTransition = 'all 0.5s ease-in-out';
+        sideMenuOverlay.style.transition = 'all 0.5s ease-in-out';
+        sideMenuOverlay.style.opacity = '0.7';
     }
 
     function closeSideMenu() {
         console.log("closeSideMenu called");
         open = false;
-        $('body').removeClass('no-scroll');
-        animSideMenu(parseInt(document.getElementById('sideMenu').style.right, 10), -Math.abs(menuWidth));
+        // TODO: block scroll when menu is open
 
-        // $('.side-menu').removeClass('open');
-        // $('.side-menu-overlay').animate({opacity: 0}, function () {
-        //     $('.side-menu-overlay').removeClass('open');
-        // });
-        // $('.side-menu').animate({right: -Math.abs(menuWidth)});
+        sideMenu.style.webkitTransition = 'all 0.5s ease-in-out';
+        sideMenu.style.MozTransition = 'all 0.5s ease-in-out';
+        sideMenu.style.msTransition = 'all 0.5s ease-in-out';
+        sideMenu.style.OTransition = 'all 0.5s ease-in-out';
+        sideMenu.style.transition = 'all 0.5s ease-in-out';
+        sideMenu.style.right = -Math.abs(menuWidth)+'px';
+        sideMenuOverlay.style.webkitTransition = 'all 0.5s ease-in-out';
+        sideMenuOverlay.style.MozTransition = 'all 0.5s ease-in-out';
+        sideMenuOverlay.style.msTransition = 'all 0.5s ease-in-out';
+        sideMenuOverlay.style.OTransition = 'all 0.5s ease-in-out';
+        sideMenuOverlay.style.transition = 'all 0.5s ease-in-out';
+        sideMenuOverlay.style.opacity = '0';
+
+        // TODO: set to none only after opacity transition
+        sideMenuOverlay.style.display = 'none';
+        body.style.overflow = '';
     }
 
     function dinamicChange(touch) {
-        $('.side-menu').removeClass('open');
+        body.style.overflow = 'hidden';
+        sideMenuOverlay.style.display = 'block';
+        sideMenu.style.transition = '';
 
-        var total = parseInt($('.side-menu').css('width'));
-        var aux = Math.abs(parseInt($('.side-menu').css('right')));
+        var total = parseInt(sideMenu.offsetWidth);
+        var aux = Math.abs(parseInt(sideMenu.style.right));
         var opacityValue = (aux / total);
-        $('.side-menu-overlay').css({opacity: (0.70 - opacityValue)});
-        $('.side-menu').css({right: -Math.abs(touch.clientX)});
+
+        console.log(total);
+        console.log(aux);
+        console.log(opacityValue);
+        sideMenu.style.right = -Math.abs(touch.clientX)+'px';
+        sideMenuOverlay.style.opacity = (0.70 - opacityValue);
+
     }
 
     document.addEventListener('touchstart', function () {
@@ -89,20 +85,14 @@ function SwipeMenu() {
         var target = event.touches[0].target;
         // console.log(event.touches[0].target);
 
-        if ($(target).is('a') ||
-            $($(target)['0'].parentElement).is('a')
-        ) {
-            console.log($(target));
-            console.log($($(target)["0"].parentElement));
-            console.log("a");
-            return;
-        }
+        // TODO: add block if click on selected elements
+
         this.allowOpen = (touchX > areaAllowOpen);
         this.allowClose = (touchX < areaAllowClose);
 
         console.log('allowOpen: ' + this.allowOpen);
         console.log('allowClose: ' + this.allowClose);
-        if (this.allowOpen) $('.side-menu-overlay').addClass('open');
+        if (this.allowOpen) sideMenuOverlay.style.display = 'block';
         this.touchStart = touchX;
         this.timeStart = event.timeStamp;
     });
